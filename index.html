@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Best @ Times Square</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
+  <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/blitzer/jquery-ui.css" type="text/css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <!--<link rel="stylesheet" href="gmap_d3.css" type="text/css"> -->
+  
+  <script src="data/hotel.geojson"></script>
+  <script src="data/food.geojson"></script>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Best @ Times Square</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#home">Home</a></li>
+        <li><a href="#about-us">About US</a></li>
+        <li><a href="#">Report</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a id="initial" href="#" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search"></span> Instruction</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<header id="home" class="container-fluid" style="background-color:#fafafa;">
+  <div class="row">
+    <div id=map class="col-xs-7 col-md-8"></div>
+    <div id="quake-pop-up", class="col-xs-12 col-md-4">
+      <div id="quake-pop-up-title" class="col-xs-12"></div>
+        <div id="quake-pop-up-content">
+          <div id="quake-pop-desc" class="col-xs-12"></div>
+          <div id="quake-pop-sub" class="col-xs-12"></div>
+        </table>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="about-us" class="container-fluid" style="background-color:#3a99d9;">
+  <div class="row">
+    <div class="col-xs-12">
+      <h1><center>about us design</center></h1>
+    </div>
+  </div>
+</section>
+
+<footer class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12 text-center">
+      <p>Copyright <strong>© <script type="text/javascript">document.write(new Date().getFullYear());</script> Pin-Hao Chen | Anna Zhoung</strong> ALL RIGHTS RESERVED</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Instruction</h4>
+      </div>
+      <div class="modal-body">
+        <p>Add Instruction</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+<script>
+$("#initial").click();
+$("#quake-pop-up").draggable();
+$(function () {
+
+//http://bl.ocks.org/mbertrand/34abee79acba54251801
+var $map = $("#map");
+var map = new google.maps.Map($map[0], {
+  zoom: 16.5,
+  //scrollwheel: false,
+  //disableDoubleClickZoom: true,
+  clickableIcons: false,
+  //draggable: false,
+  center: new google.maps.LatLng(40.759,-73.985),
+  mapTypeId: google.maps.MapTypeId.TERRAIN    
+});
+var customStyled = [
+  { featureType: "administrative", elementType: "labels", stylers: [{ visibility: "off" }]},
+  { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }]},
+  { featureType: "water", elementType: "labels", stylers: [{ visibility: "of" }]},
+  { featureType: "road", elementType: "labels", stylers: [{ visibility: "on" }]}
+];
+map.set('styles',customStyled);
+var marker = new google.maps.Marker({
+  position: new google.maps.LatLng(40.7588,-73.985),
+  map: map,
+  title: 'Times Square',
+  animation: google.maps.Animation.DROP,
+  icon: {
+    url: 'http://image.flaticon.com/icons/svg/252/252025.svg',
+    scaledSize: new google.maps.Size(50, 50),
+    origin: new google.maps.Point(0, 0),
+    anchor: new google.maps.Point(32,65),
+    labelOrigin: new google.maps.Point(28,12)
+  },
+  label: {
+    text: 'Times Square',
+    //color: "#eb3a44",
+    fontSize: "16px",
+    fontWeight: "bold",
+  },
+});
+
+var overlay = new google.maps.OverlayView();
+
+overlay.onAdd = function () {
+  var layer = d3.select(this.getPanes().overlayMouseTarget).append("div").attr("class", "SvgOverlay");
+  var svg = layer.append("svg");
+  var my_pt = svg.append("g").attr("class", "my_pt");
+
+  overlay.draw = function () {
+    var clicked_hotel_id = "", marked_food_id = [];
+    var markerOverlay = this;
+    var overlayProjection = markerOverlay.getProjection();
+
+    // Turn the overlay projection into a d3 projection
+    var googleMapProjection = function (coordinates) {
+        var googleCoordinates = new google.maps.LatLng(coordinates[1], coordinates[0]);
+        var pixelCoordinates = overlayProjection.fromLatLngToDivPixel(googleCoordinates);
+        return [pixelCoordinates.x + 4000, pixelCoordinates.y + 4000];
+    }
+
+    path = d3.geo.path().projection(googleMapProjection);
+    
+    // clean the old paths when zooming the map 
+    d3.selectAll("path").remove(); 
+    
+    my_pt.selectAll("dummy_path") // Food
+      .data(food_json.features) 
+      .enter().append("svg:path")
+      .attr("d", path)
+      .attr("center", path)
+      .attr("class", "food")
+      .attr("id", function(d){return d.properties.ID;})
+      //.attr("id", function(d){return d.properties.CompanyName;})
+      .on("mouseover", function (d) {
+        var mousePosition = d3.svg.mouse(this);
+        $("#quake-pop-up").fadeOut(100, function () {
+          // Popup content
+          $("#quake-pop-up-title").html(d.properties.CompanyName);
+          //$("#quake-pop-img").html(d.properties.mag);
+          var price = "NA";
+          if(d.properties.Price!="NA")
+            price = Array(parseInt(d.properties.Price)+1).join("$");
+
+          $("#quake-pop-desc").html(
+            `Address: ${d.properties.Address}<br/>`+
+            "Phone: "+formatPhoneNumber(d.properties.Phone)+"<br/>"+
+            "Yelp Rating: "+d.properties.Rating+"<br/>"+
+            "Yelp Review Count: "+d.properties.Review+"<br/>"+
+            "Yelp Price: "+price+"<br/>"
+          );
+          $("#quake-pop-up").fadeIn(100);
+        });
+      })
+      .on("mouseout", function () {
+        $("#quake-pop-up").fadeOut(50);
+      });
+      /*.on("click", function(d) {
+        if (clicked_pt_id != "") {
+          $(clicked_pt_id).attr("d", $(clicked_pt_id).attr("center"));
+          // var clicked_pt = d3.selectAll(clicked_pt_id)
+          // clicked_pt.attr("d",  clicked_pt.attr("center"));
+        }
+        clicked_pt_id = "#"+d.properties.ID;
+        //var pt = d3.select("#"+d.properties.ID)
+        d3.select("#"+d.properties.ID)
+          .transition().duration(1000)
+          .attr("d", path.pointRadius(function (d) {
+            return Math.sqrt((Math.exp(parseFloat(8.9)))); 
+          }));
+      });*/
+
+    my_pt.selectAll("dummy_path") //  Hotel
+      .data(hotel_json.features) 
+      .enter().append("svg:path")
+      .attr("d", path)
+      .attr("center", path)
+      .attr("class","hotel") 
+      .attr("id", function(d){return d.properties.ID;})                    
+      .on("mouseover", function (d) {
+        if(d3.select(this).attr("d")!= d3.select(this).attr("center")){
+          //alert(marked_food_id);
+          $("#quake-pop-up").fadeOut(100, function () {
+            // Popup content
+            $("#quake-pop-up-title").html("Top Restaurants Near "+d.properties.CompanyName);
+            //$("#quake-pop-img").html(d.properties.mag);
+            marked_food_id = (d.properties.top3restaurant).split("|");
+            $("#quake-pop-desc").html(marked_food_id.join(" | "));
+            $("#quake-pop-up").fadeIn(100);
+          });
+        }
+        else {
+          var mousePosition = d3.svg.mouse(this);
+          //var format = d3.time.format("%Y-%m-%d %HH:%MM:%SS");
+          $("#quake-pop-up").fadeOut(100, function () {
+            // Popup content
+            $("#quake-pop-up-title").html(d.properties.CompanyName);
+            //$("#quake-pop-img").html(d.properties.mag);
+            var price = "NA";
+            if(d.properties.Price!="NA")
+              price = Array(parseInt(d.properties.Price)+1).join("$");
+
+            $("#quake-pop-desc").html(
+              "Address: "+d.properties.Address+"<br/>"+
+              "Phone: "+formatPhoneNumber(d.properties.Phone)+"<br/>"+
+              "Yelp Rating: "+d.properties.Rating+"<br/>"+
+              "Yelp Review Count: "+d.properties.Review+"<br/>"+
+              "Yelp Price: "+price+"<br/>"
+            );
+            $("#quake-pop-up").fadeIn(100);
+          });
+        }
+      })
+      .on("mouseout", function () {
+        $("#quake-pop-up").fadeOut(50);
+      })
+      .on("click", function(d) {
+        if (clicked_hotel_id != "") {
+          //$(clicked_hotel_id).attr("d", $(clicked_hotel_id).attr("center"));
+          var clicked_pt = d3.selectAll(clicked_hotel_id)
+          clicked_pt.transition().duration(500)
+            .attr("d",  clicked_pt.attr("center"))
+            .style("fill-opacity", 0.5);
+          $("#"+marked_food_id.join(", #")).css({"fill": "green", "fill-opacity": 0.2});
+        }
+        clicked_hotel_id = "#"+d.properties.ID;
+        marked_food_id = (d.properties.top3restaurant).split("|");
+        $("#"+marked_food_id.join(", #")).css({"fill": "#F9CE00", "fill-opacity": 1});
+
+        d3.select("#"+d.properties.ID)
+          .transition().duration(1000)
+          .attr("d", path.pointRadius(function (d) {
+            lat = d.properties.Latitude;
+            zoom = map.getZoom();
+            metersPerPx = 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, zoom)
+            //alert(Math.sqrt((Math.exp(parseFloat(8.9*map.getZoom()/17)))));
+            return (100/metersPerPx); 
+          }))
+          .style("fill-opacity", 0.2);
+
+        $("#quake-pop-up").fadeOut(100, function () {
+          // Popup content
+          $("#quake-pop-up-title").html("Top Restaurants Near "+d.properties.CompanyName);
+          //$("#quake-pop-img").html(d.properties.mag);
+          $("#quake-pop-desc").html(marked_food_id.join(" | "));
+          $("#quake-pop-up").fadeIn(100);
+        });
+      });
+    };
+  //createHistogram(collection, quakes);
+};
+
+overlay.setMap(map);
+function formatPhoneNumber(s) {
+  var s2 = (""+s).replace(/\D/g, '');
+  var m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
+  return (!m) ? null : "(" + m[1] + ") " + m[2] + "-" + m[3];
+}
+
+});
+</script>
+<style type="text/css">
+header {padding-top: 52px;}
+#map {height: 95vh; width:98.5vw;}
+footer {background-color: #808080; color: white; padding-top:0.5em;}
+  
+.SvgOverlay{position:relative;width:100%;height:100%}
+.SvgOverlay svg{position:absolute;top:-4000px;left:-4000px;width:8000px;height:8000px}
+.SvgOverlay path{fill:#000;fill-opacity:.4;stroke:#fff;stroke-width:1.5px}
+.SvgOverlay path.food {fill: green;}
+.SvgOverlay path.hotel {fill: blue; fill-opacity: .5;}
+.SvgOverlay path:hover {fill-opacity: .8;}
+
+
+#quake-pop-up {
+  display: none;
+  position:absolute;
+  color: white;
+  font-size: 14px;
+  background: rgba(0,0,0,0.5);
+  padding: 5px 10px 5px 10px;
+  -moz-border-radius: 5px 5px;
+  border-radius: 5px 5px;
+  z-index: 99;
+  right: 0;
+  top: 60px;
+}
+#quake-pop-up-title {
+  font-size: 15px;
+  width:100%;
+  margin-bottom: 4px;
+  font-weight: bolder;
+}
+#quake-pop-up-content {
+  font-size: 14px;
+}
+#quake-pop-desc {
+  margin-left: 10px;
+  width: 300px;
+  color: white;
+}
+#quake-pop-img {
+  font-size: 30px;
+  font-weight: bolder;
+  color: white;
+}
+</style>
+</html>

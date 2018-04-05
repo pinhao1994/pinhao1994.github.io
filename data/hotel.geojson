@@ -1,0 +1,461 @@
+var hotel_json = {
+    "type":"FeatureCollection",
+    "crs": {
+        "type":"name",
+        "properties": {
+            "name": "urn:ogc:def:crs:EPSG::4269"
+        }
+    }
+    ,
+    "features":[ {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Paramount Hotel", "Address": "235 W 46th St, New York, NY 10036", "Phone": "2127645500", "Latitude": 40.759132, "Longitude": -73.986348, "Rating": "2.2", "Review": "272", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_1", "top5cat": "Italian:4|American:4|Bar \/ Lounge:3|Deli:2|Pizza:1", "top3restaurant": "food_259|food_278|food_275"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.986348, 40.759132]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Carter Hotel", "Address": "250 W 43rd St, New York, NY 10036", "Phone": "2129446000", "Latitude": 40.757309, "Longitude": -73.987901, "Rating": "2", "Review": "114", "Price": "1", "YelpCategory": "hotels", "ID": "hotel_2", "top5cat": "American:6|Dessert:3|Deli:3|Fast Food:2|Steakhouse:1", "top3restaurant": "food_27|food_33|food_273"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.987901, 40.757309]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Millennium Hotel", "Address": "145 W 44th St, New York, NY 10036", "Phone": "2127684400", "Latitude": 40.756667, "Longitude": -73.984396, "Rating": "3", "Review": "347", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_3", "top5cat": "American:5|Italian:4|Bar \/ Lounge:4|French:2|Deli:2", "top3restaurant": "food_51|food_196|food_43"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.984396, 40.756667]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Best Western President Hotel", "Address": "234 W 48th St, New York, NY 10036", "Phone": "2122468800", "Latitude": 40.760454, "Longitude": -73.985655, "Rating": "2.5", "Review": "88", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_4", "top5cat": "Italian:7|American:5|Deli:2|Coffee:2|Catering:2", "top3restaurant": "food_278|food_302|food_270"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.985655, 40.760454]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Novotel", "Address": "226 W 52nd St, New York, NY 10019", "Phone": "2123150100", "Latitude": 40.762897, "Longitude": -73.983683, "Rating": "3.5", "Review": "161", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_5", "top5cat": "Italian:3|Deli:3|Russian:2|Thai:1|Steakhouse:1", "top3restaurant": "food_24|food_277|food_102|food_140|food_175"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983683, 40.762897]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Dream Hotel", "Address": "1674 Broadway, New York, NY 10019", "Phone": "2122472000", "Latitude": 40.762861, "Longitude": -73.983109, "Rating": "2.5", "Review": "236", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_6", "top5cat": "Deli:5|Italian:3|American:3|Steakhouse:1|Russian:1", "top3restaurant": "food_277|food_17|food_18"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983109, 40.762861]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "W Hotel", "Address": "1567 Broadway, New York, NY 10036", "Phone": "2129307400", "Latitude": 40.759247, "Longitude": -73.985168, "Rating": "3.5", "Review": "423", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_7", "top5cat": "American:4|Italian:3|Pizza:2|Deli:2|Bar \/ Lounge:2", "top3restaurant": "food_259|food_278|food_105"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.985168, 40.759247]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Doubletree Guest Suites", "Address": "1568 Broadway, New York, NY 10036", "Phone": "2127191600", "Latitude": 40.759055, "Longitude": -73.98471, "Rating": "3.5", "Review": "247", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_8", "top5cat": "American:3|Deli:2|Steakhouse:1|Pizza:1|Italian:1", "top3restaurant": "food_144|food_105|food_229"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.98471, 40.759055]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Stay Hotel", "Address": "157 W 47th St, New York, NY 10036", "Phone": "2127683700", "Latitude": 40.758678, "Longitude": -73.983342, "Rating": "3", "Review": "53", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_9", "top5cat": "American:5|Deli:3|Cuban:2|Bar \/ Lounge:2|Turkish:1", "top3restaurant": "food_160|food_210|food_47"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983342, 40.758678]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Hotel 41 At Times Square", "Address": "206 W 41st St, New York, NY 10036", "Phone": "2127038600", "Latitude": 40.755597, "Longitude": -73.987999, "Rating": "4.5", "Review": "8", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_10", "top5cat": "Deli:2|Seafood:1|Pizza:1|Italian:1|Fast Food:1", "top3restaurant": "food_130|food_161|food_86"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.987999, 40.755597]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Time Hotel, The", "Address": "224 W 49th St, New York, NY 10019", "Phone": "8778463692", "Latitude": 40.761014, "Longitude": -73.985052, "Rating": "3", "Review": "186", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_11", "top5cat": "Italian:4|Coffee:3|American:3|Steakhouse:2|Pizza:2", "top3restaurant": "food_35|food_302|food_147"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.985052, 40.761014]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Hilton Times Square", "Address": "234 W 42nd St, New York, NY 10036", "Phone": "2126422510", "Latitude": 40.756747, "Longitude": -73.988659, "Rating": "3.5", "Review": "242", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_12", "top5cat": "Deli:5|American:4|Fast Food:2|Dessert:2|Steakhouse:1", "top3restaurant": "food_27|food_33|food_303"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.988659, 40.756747]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "The Westin New York at Times Square", "Address": "270 W 43rd St, New York, NY 10036", "Phone": "2128681900ext245", "Latitude": 40.757482, "Longitude": -73.988309, "Rating": "3.5", "Review": "433", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_13", "top5cat": "American:6|Deli:5|Dessert:3|Steakhouse:1|Pizza:1", "top3restaurant": "food_27|food_33|food_303"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.988309, 40.757482]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Crowne Plaza Times Square", "Address": "1605 Broadway, New York, NY 10019", "Phone": "2129774000", "Latitude": 40.760537, "Longitude": -73.984644, "Rating": "3", "Review": "273", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_14", "top5cat": "American:7|Deli:5|Pizza:3|Italian:3|Japanese:2", "top3restaurant": "food_252|food_101|food_302"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.984644, 40.760537]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Renaissance Times Square", "Address": "714 Seventh Ave, New York, NY 10036", "Phone": "2122615100", "Latitude": 40.759581, "Longitude": -73.984366, "Rating": "4", "Review": "143", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_15", "top5cat": "American:5|Deli:3|Pizza:2|Coffee:2|Steakhouse:1", "top3restaurant": "food_282|food_229|food_245"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.984366, 40.759581]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "New York Inn", "Address": "765 Eighth Ave, New York, NY 10036", "Phone": "8884651140", "Latitude": 40.76029, "Longitude": -73.987572, "Rating": "1.5", "Review": "18", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_16", "top5cat": "Steakhouse:2|Pizza:2|American:2|Italian:1|Indian:1", "top3restaurant": "food_238|food_83|food_231"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.987572, 40.76029]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Casablanca Hotel", "Address": "147 W 43rd St, New York, NY 10036", "Phone": "2128691212", "Latitude": 40.756022, "Longitude": -73.984808, "Rating": "4.5", "Review": "65", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_17", "top5cat": "American:4|Italian:3|French:2|Catering:2|Bar \/ Lounge:2", "top3restaurant": "food_51|food_65|food_43"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.984808, 40.756022]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "The French Quarters Guest Apartments", "Address": "346 W 46th St, New York, NY 10036", "Phone": "NA", "Latitude": 40.760359, "Longitude": -73.989286, "Rating": "5", "Review": "56", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_18", "top5cat": "Italian:8|American:6|Steakhouse:2|Spanish:2|Japanese:2", "top3restaurant": "food_93|food_98|food_111"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.989286, 40.760359]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Hotel St. James", "Address": "109 W 45th St, New York, NY 10036", "Phone": "2122213600", "Latitude": 40.757026, "Longitude": -73.983291, "Rating": "3", "Review": "64", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_19", "top5cat": "Bar \/ Lounge:5|American:4|Italian:2|French:2|Catering:2", "top3restaurant": "food_196|food_210|food_205"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983291, 40.757026]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Big Apple Hostel", "Address": "119 W 45th St, New York, NY 10036", "Phone": "2123022603", "Latitude": 40.757114, "Longitude": -73.983494, "Rating": "3.5", "Review": "12", "Price": "1", "YelpCategory": "hostels", "ID": "hotel_20", "top5cat": "Bar \/ Lounge:6|American:5|Italian:3|French:3|Deli:2", "top3restaurant": "food_160|food_196|food_43"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983494, 40.757114]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Hotel Mela", "Address": "120 W 44th St, New York, NY 10036", "Phone": "2127107000", "Latitude": 40.756461, "Longitude": -73.983952, "Rating": "3.5", "Review": "213", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_21", "top5cat": "American:6|Bar \/ Lounge:4|Italian:3|French:2|Deli:2", "top3restaurant": "food_51|food_196|food_43"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983952, 40.756461]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "AKA", "Address": "123 W 44th St, New York, NY 10036", "Phone": "2126455700", "Latitude": 40.756491, "Longitude": -73.983977, "Rating": "4", "Review": "22", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_22", "top5cat": "American:6|Bar \/ Lounge:4|Italian:3|French:2|Deli:2", "top3restaurant": "food_51|food_196|food_43"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983977, 40.756491]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Grace Hotel", "Address": "125 W 45th St, New York, NY 10036", "Phone": "2123542323", "Latitude": 40.757163, "Longitude": -73.983613, "Rating": "3", "Review": "173", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_23", "top5cat": "Bar \/ Lounge:6|American:6|Italian:3|French:3|Deli:3", "top3restaurant": "food_160|food_196|food_43"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983613, 40.757163]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Comfort Inn Midtown", "Address": "129 W 46th St, New York, NY 10036", "Phone": "2122212600", "Latitude": 40.757811, "Longitude": -73.98323, "Rating": "3.5", "Review": "64", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_24", "top5cat": "American:7|Deli:4|Bar \/ Lounge:4|Cuban:2|Catering:2", "top3restaurant": "food_160|food_196|food_210"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.98323, 40.757811]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "The Night Hotel", "Address": "132 W 45th St, New York, NY 10036", "Phone": "NA", "Latitude": 40.757218, "Longitude": -73.983786, "Rating": "3.5", "Review": "123", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_25", "top5cat": "Bar \/ Lounge:6|American:6|Deli:4|Italian:3|French:3", "top3restaurant": "food_160|food_196|food_43"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.983786, 40.757218]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Muse Hotel, The", "Address": "130 W 46th St, New York, NY 10036", "Phone": "2124852701", "Latitude": 40.757814, "Longitude": -73.98328, "Rating": "4", "Review": "208", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_26", "top5cat": "American:7|Deli:4|Bar \/ Lounge:4|Cuban:2|Catering:2", "top3restaurant": "food_160|food_196|food_210"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.98328, 40.757814]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Portland Square Hotel", "Address": "132 W 47th St, New York, NY 10036", "Phone": "2123820600", "Latitude": 40.758461, "Longitude": -73.982869, "Rating": "2", "Review": "9", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_27", "top5cat": "American:5|Deli:3|Cuban:2|Bar \/ Lounge:2|Turkish:1", "top3restaurant": "food_160|food_210|food_47"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.982869, 40.758461]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Flatotel International", "Address": "135 W 52nd St, New York, NY 10019", "Phone": "2128879400", "Latitude": 40.761736, "Longitude": -73.980883, "Rating": "3", "Review": "77", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_28", "top5cat": "American:2|Italian:1|Catering:1|Vietnamese:|Turkish:", "top3restaurant": "food_69|food_260|food_319"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.980883, 40.761736]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Econo Lodge", "Address": "767 Eighth Ave, New York, NY 10036", "Phone": "2122461991\u000e", "Latitude": 40.760315, "Longitude": -73.987554, "Rating": "3", "Review": "28", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_29", "top5cat": "Steakhouse:2|Pizza:2|American:2|Italian:1|Indian:1", "top3restaurant": "food_238|food_83|food_231"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.987554, 40.760315]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Hilton Garden Inn", "Address": "790 Eighth Ave, New York, NY 10019", "Phone": "2125817000", "Latitude": 40.761127, "Longitude": -73.98694, "Rating": "4", "Review": "255", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_30", "top5cat": "American:3|Pizza:1|Mexican:1|Italian:1|Indian:1", "top3restaurant": "food_242|food_268|food_280"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.98694, 40.761127]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Milford Plaza Hotel & Restaurant", "Address": "700 Eighth Ave, New York, NY 10036", "Phone": "2126424641", "Latitude": 40.758663, "Longitude": -73.988738, "Rating": "2.8", "Review": "532", "Price": "1", "YelpCategory": "hotels", "ID": "hotel_31", "top5cat": "Deli:4|American:4|Pizza:2|Italian:2|Dessert:2", "top3restaurant": "food_323|food_273|food_235"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.988738, 40.758663]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "InterContinental Hotel", "Address": "300 W 44th St, New York, NY 10036", "Phone": "2127555900\u000e", "Latitude": 40.758706, "Longitude": -73.989276, "Rating": "NA", "Review": "NA", "Price": "NA", "YelpCategory": "NA", "ID": "hotel_32", "top5cat": "Deli:3|American:2|Pizza:1|Japanese:1|Italian:1", "top3restaurant": "food_323|food_84|food_85"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.989276, 40.758706]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Mayfair Hotel", "Address": "242 W 49th St, New York, NY 10019", "Phone": "2125860300", "Latitude": 40.761138, "Longitude": -73.985344, "Rating": "3.5", "Review": "86", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_33", "top5cat": "Italian:4|American:3|Steakhouse:2|Japanese:2|Deli:2", "top3restaurant": "food_35|food_302|food_147"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.985344, 40.761138]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "The Michaelangelo Hotel", "Address": "152 W 51st St, New York, NY 10019", "Phone": "2127651900", "Latitude": 40.761439, "Longitude": -73.982168, "Rating": "4", "Review": "97", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_34", "top5cat": "American:4|Steakhouse:2|Pizza:1|Italian:1|Dessert:1", "top3restaurant": "food_69|food_225|food_319"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.982168, 40.761439]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Remington Hotel Co", "Address": "129 W 46th St, New York, NY 10036", "Phone": "2122212600", "Latitude": 40.757811, "Longitude": -73.98323, "Rating": "3.5", "Review": "64", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_35", "top5cat": "American:7|Deli:4|Bar \/ Lounge:4|Cuban:2|Catering:2", "top3restaurant": "food_160|food_196|food_210"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.98323, 40.757811]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Amsterdam Court Hotel", "Address": "226 W 50th St, New York, NY 10019", "Phone": "2124591000\u000e", "Latitude": 40.761668, "Longitude": -73.984651, "Rating": "2.5", "Review": "120", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_36", "top5cat": "Deli:4|Italian:3|American:3|Catering:2|Bar \/ Lounge:2", "top3restaurant": "food_35|food_141|food_147"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.984651, 40.761668]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Sheraton Manhattan at Times Square", "Address": "790 Seventh Ave, New York, NY 10019", "Phone": "2125813300", "Latitude": 40.762005, "Longitude": -73.982612, "Rating": "2", "Review": "468", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_37", "top5cat": "American:7|Deli:4|Italian:2|Steakhouse:1|Consumables:1", "top3restaurant": "food_17|food_18|food_319"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.982612, 40.762005]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Hampton Inn", "Address": "851 Eighth Ave, New York, NY 10019", "Phone": "2125814100", "Latitude": 40.763059, "Longitude": -73.985557, "Rating": "4", "Review": "162", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_38", "top5cat": "Mexican:2|Deli:2|Chinese:2|Pizza:1|Italian:1", "top3restaurant": "food_4|food_3|food_7"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.985557, 40.763059]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Sheraton New York Hotel and Towers", "Address": "811 Seventh Ave, New York, NY 10019", "Phone": "2125811000", "Latitude": 40.762674, "Longitude": -73.982095, "Rating": "2.5", "Review": "637", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_39", "top5cat": "American:5|Italian:3|Deli:3|Pizza:1|Dessert:1", "top3restaurant": "food_69|food_17|food_18"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.982095, 40.762674]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Hotel Edison", "Address": "228 W 47th St, New York, NY 10036", "Phone": "2128405000", "Latitude": 40.759727, "Longitude": -73.985886, "Rating": "3", "Review": "333", "Price": "2", "YelpCategory": "hotels", "ID": "hotel_40", "top5cat": "Italian:7|Bar \/ Lounge:4|American:4|Deli:2|Vietnamese:1", "top3restaurant": "food_259|food_278|food_275"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.985886, 40.759727]
+        }
+    }
+    ,
+    {
+        "type":"Feature",
+        "properties": {
+            "CompanyName": "Marriott Marquis Hotel", "Address": "1535 Broadway, New York, NY 10036", "Phone": "2123981900", "Latitude": 40.758267, "Longitude": -73.985468, "Rating": "3.5", "Review": "750", "Price": "3", "YelpCategory": "hotels", "ID": "hotel_41", "top5cat": "American:5|Japanese:1|Italian:1|Deli:1|Coffee:1", "top3restaurant": "food_177|food_105|food_288"
+        }
+        ,
+        "geometry": {
+            "type": "Point", "coordinates": [-73.985468, 40.758267]
+        }
+    }
+    ]
+}
