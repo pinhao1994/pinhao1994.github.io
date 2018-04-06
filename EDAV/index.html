@@ -8,13 +8,15 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
+<!--   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script> -->
   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWx_-7PwHUJsp3sj0iT-SK8w_HTojODok&sensor=false&callback=initMap"></script>
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/blitzer/jquery-ui.css" type="text/css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <!--<link rel="stylesheet" href="gmap_d3.css" type="text/css"> -->
-  
+  <!-- <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script> -->
+
   <script src="data/hotel.geojson"></script>
   <script src="data/food.geojson"></script>
 </head>
@@ -45,7 +47,7 @@
 <header id="home" class="container-fluid" style="background-color:#fafafa;">
   <div class="row">
     <div id=map class="col-xs-7 col-md-8"></div>
-    <div id="quake-pop-up", class="col-xs-12 col-md-4">
+    <div id="quake-pop-up", class="col-xs-12 col-sm-4">
       <div id="quake-pop-up-title" class="col-xs-12"></div>
         <div id="quake-pop-up-content">
           <div id="quake-pop-desc" class="col-xs-12"></div>
@@ -56,18 +58,65 @@
   </div>
 </header>
 
-<section id="about-us" class="container-fluid" style="background-color:#3a99d9;">
-  <div class="row">
-    <div class="col-xs-12">
-      <h1><center>about us design</center></h1>
-    </div>
+<section id="about-us" class="container-fluid" style="background-color:#DBEDF3;">
+  <div class="row" style="padding: 2em;">
+    <person class="col-xs-12 col-md-6">
+      <div class="col-xs-6 col-md-4">
+        <img src="data/Bill.jpg" class="img-circle" alt="Bill" width="200" height="200">
+      </div>
+      <div class="col-xs-6 col-md-8">
+        <h1>Pin-Hao (Bill) Chen</h1>
+        <h4>phc2121 | Data Scientist & Web Engineer</h4>
+        <form action="https://www.linkedin.com/in/pinhao-chen-19940514/">
+          <input type="submit" class="btn btn-info" value="LinkIn">
+        </form>
+      </div>
+    </person>
+    <person class="col-xs-12 col-md-6">
+      <div class="col-xs-6 col-md-8">
+        <h1>Anna Zhou</h1>
+        <h4>yz3220 | Data Scientist & Designer</h4>
+        <form action="https://www.linkedin.com/in/yang-anna-zhou/">
+          <input type="submit" class="btn btn-info" value="LinkIn" />
+        </form>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <img src="data/Anna.png" class="img-circle" alt="Bill" width="200" height="200">
+      </div>
+    </person>
+  </div>
+  <div class="row" style="padding: 2em;">
+    <person class="col-xs-12 col-md-6">
+      <div class="col-xs-6 col-md-4">
+        <img src="data/youyang.jpg" class="img-circle" alt="Bill" width="200" height="200">
+      </div>
+      <div class="col-xs-6 col-md-8">
+        <h1>Youyang Liu</h1>
+        <h4>yl3767 | Data Scientist</h4>
+        <form action="https://www.linkedin.com/in/youyangliu/">
+          <input type="submit" class="btn btn-info" value="LinkIn">
+        </form>
+      </div>
+    </person>
+    <person class="col-xs-12 col-md-6">
+      <div class="col-xs-6 col-md-8">
+        <h1>Jolie Tan</h1>
+        <h4>jt2998 | Data Scientist</h4>
+        <form action="https://www.linkedin.com/in/jolietan/">
+          <input type="submit" class="btn btn-info" value="LinkIn" />
+        </form>
+      </div>
+      <div class="col-xs-6 col-md-4">
+        <img src="data/jolie.png" class="img-circle" alt="Bill" width="200" height="200">
+      </div>
+    </person>
   </div>
 </section>
 
 <footer class="container-fluid">
   <div class="row">
     <div class="col-xs-12 text-center">
-      <p>Copyright <strong>© <script type="text/javascript">document.write(new Date().getFullYear());</script> Pin-Hao Chen | Anna Zhoung</strong> ALL RIGHTS RESERVED</p>
+      <p>Copyright <strong>© <script type="text/javascript">document.write(new Date().getFullYear());</script> Pin-Hao Chen | Anna Zhou</strong> ALL RIGHTS RESERVED</p>
     </div>
   </div>
 </footer>
@@ -207,10 +256,11 @@ overlay.onAdd = function () {
     my_pt.selectAll("dummy_path") //  Hotel
       .data(hotel_json.features) 
       .enter().append("svg:path")
-      .attr("d", path)
-      .attr("center", path)
+      //.attr("d", path)
+      .attr("d", path.pointRadius(Math.sqrt((Math.exp(parseFloat(4))))))
+      .attr("center", path.pointRadius(Math.sqrt((Math.exp(parseFloat(4))))))
       .attr("class","hotel") 
-      .attr("id", function(d){return d.properties.ID;})                    
+      .attr("id", function(d){return d.properties.ID;})                  
       .on("mouseover", function (d) {
         if(d3.select(this).attr("d")!= d3.select(this).attr("center")){
           //alert(marked_food_id);
@@ -285,6 +335,7 @@ overlay.onAdd = function () {
 };
 
 overlay.setMap(map);
+
 function formatPhoneNumber(s) {
   var s2 = (""+s).replace(/\D/g, '');
   var m = s2.match(/^(\d{3})(\d{3})(\d{4})$/);
@@ -300,9 +351,9 @@ footer {background-color: #808080; color: white; padding-top:0.5em;}
   
 .SvgOverlay{position:relative;width:100%;height:100%}
 .SvgOverlay svg{position:absolute;top:-4000px;left:-4000px;width:8000px;height:8000px}
-.SvgOverlay path{fill:#000;fill-opacity:.4;stroke:#fff;stroke-width:1.5px}
-.SvgOverlay path.food {fill: green;}
-.SvgOverlay path.hotel {fill: blue; fill-opacity: .5;}
+.SvgOverlay path{stroke:#fff;stroke-width:1.5px}
+.SvgOverlay path.food {fill: green; fill-opacity: .4;}
+.SvgOverlay path.hotel {fill: blue; fill-opacity: .6;}
 .SvgOverlay path:hover {fill-opacity: .8;}
 
 
@@ -330,7 +381,7 @@ footer {background-color: #808080; color: white; padding-top:0.5em;}
 }
 #quake-pop-desc {
   margin-left: 10px;
-  width: 300px;
+  /*width: 300px;*/
   color: white;
 }
 #quake-pop-img {
