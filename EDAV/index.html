@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
   <title>Best @ Times Square</title>
+  <link rel="Shortcut Icon" type="image/x-icon" href="data/favicon.ico" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/2.10.0/d3.v2.min.js"></script>
-<!--   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script> -->
-  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWx_-7PwHUJsp3sj0iT-SK8w_HTojODok&sensor=false&callback=initMap"></script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+  <!-- <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWx_-7PwHUJsp3sj0iT-SK8w_HTojODok&sensor=false&callback=initMap"></script> -->
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/blitzer/jquery-ui.css" type="text/css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-  <!--<link rel="stylesheet" href="gmap_d3.css" type="text/css"> -->
-  <!-- <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script> -->
+  <script src="https://d3js.org/d3.v4.min.js"></script>
 
   <script src="data/hotel.geojson"></script>
   <script src="data/food.geojson"></script>
@@ -51,7 +51,7 @@
       <div id="quake-pop-up-title" class="col-xs-12"></div>
         <div id="quake-pop-up-content">
           <div id="quake-pop-desc" class="col-xs-12"></div>
-          <div id="quake-pop-sub" class="col-xs-12"></div>
+          <div id="quake-pop-hist" class="col-xs-12"></div>
         </table>
       </div>
     </div>
@@ -59,55 +59,55 @@
 </header>
 
 <section id="about-us" class="container-fluid" style="background-color:#DBEDF3;">
-  <div class="row" style="padding: 2em;">
-    <person class="col-xs-12 col-md-6">
-      <div class="col-xs-6 col-md-4">
+  <div class="col-md-6">
+    <person class="row">
+      <div class="col-xs-4">
         <img src="data/Bill.jpg" class="img-circle" alt="Bill" width="200" height="200">
       </div>
-      <div class="col-xs-6 col-md-8">
+      <div class="col-xs-8">
         <h1>Pin-Hao (Bill) Chen</h1>
         <h4>phc2121 | Data Scientist & Web Engineer</h4>
         <form action="https://www.linkedin.com/in/pinhao-chen-19940514/">
-          <input type="submit" class="btn btn-info" value="LinkIn">
+          <input type="submit" class="btn btn-info" value="LinkedIn">
         </form>
       </div>
     </person>
-    <person class="col-xs-12 col-md-6">
-      <div class="col-xs-6 col-md-8">
-        <h1>Anna Zhou</h1>
-        <h4>yz3220 | Data Scientist & Designer</h4>
-        <form action="https://www.linkedin.com/in/yang-anna-zhou/">
-          <input type="submit" class="btn btn-info" value="LinkIn" />
-        </form>
+    <person class="row">
+      <div class="col-xs-4">
+        <img src="data/Youyang.jpg" class="img-circle" alt="youyang" width="200" height="200">
       </div>
-      <div class="col-xs-6 col-md-4">
-        <img src="data/Anna.png" class="img-circle" alt="Bill" width="200" height="200">
-      </div>
-    </person>
-  </div>
-  <div class="row" style="padding: 2em;">
-    <person class="col-xs-12 col-md-6">
-      <div class="col-xs-6 col-md-4">
-        <img src="data/youyang.jpg" class="img-circle" alt="Bill" width="200" height="200">
-      </div>
-      <div class="col-xs-6 col-md-8">
+      <div class="col-xs-8">
         <h1>Youyang Liu</h1>
         <h4>yl3767 | Data Scientist</h4>
         <form action="https://www.linkedin.com/in/youyangliu/">
-          <input type="submit" class="btn btn-info" value="LinkIn">
+          <input type="submit" class="btn btn-info" value="LinkedIn">
         </form>
       </div>
     </person>
-    <person class="col-xs-12 col-md-6">
-      <div class="col-xs-6 col-md-8">
+  </div>
+  <div class="col-md-6">
+    <person class="row">
+      <div class="col-xs-4">
+        <img src="data/Anna.png" class="img-circle" alt="Anna" width="200" height="200">
+      </div>
+      <div class="col-xs-8">
+        <h1>Anna Zhou</h1>
+        <h4>yz3220 | Data Scientist & Designer</h4>
+        <form action="https://www.linkedin.com/in/yang-anna-zhou/">
+          <input type="submit" class="btn btn-info" value="LinkedIn" />
+        </form>
+      </div>      
+    </person>
+    <person class="row">
+      <div class="col-xs-4">
+        <img src="data/Jolie.jpg" class="img-circle" alt="Jolie" width="200" height="200">
+      </div>
+      <div class="col-xs-8">
         <h1>Jolie Tan</h1>
         <h4>jt2998 | Data Scientist</h4>
         <form action="https://www.linkedin.com/in/jolietan/">
-          <input type="submit" class="btn btn-info" value="LinkIn" />
+          <input type="submit" class="btn btn-info" value="LinkedIn" />
         </form>
-      </div>
-      <div class="col-xs-6 col-md-4">
-        <img src="data/jolie.png" class="img-circle" alt="Bill" width="200" height="200">
       </div>
     </person>
   </div>
@@ -131,7 +131,61 @@
         <h4 class="modal-title">Instruction</h4>
       </div>
       <div class="modal-body">
-        <p>Add Instruction</p>
+        <section class="row">
+          <div class="col-xs-3">
+            <img src="data/blue.png" class="img-thumbnail" alt="blueCircle-Hotel" height="100" width="130">
+          </div>
+          <div class="col-xs-3">
+            Each <font style="color: blue"><i>blue</i></font> point represents a <b>HOTEL</b>
+          </div>
+          <div class="col-xs-3">
+            <img src="data/green.png" class="img-thumbnail" alt="greenCircle-Restaurant" height="100" width="130">
+          </div>
+          <div class="col-xs-3">
+            Each <font style="color: green"><i>green</i></font> point represents a <b>RESTAURANT</b>
+          </div>
+        </section>
+        <section class="row">
+          <div class="col-xs-6">
+            <img src="data/restaurants.png" class="img-thumbnail" alt="restaurant-detail" height="150" width="320"> 
+          </div>
+          <div class="col-xs-6">
+            Mouse over <font style="color: green"><i>GREEN</i></font> points, a gray box will pop up showing the details of the current restaurant, including yelp rating, price and review counts.
+          </div>
+        </section>
+        <section class="row">
+          <div class="col-xs-6">        
+            <img src="data/hotel.png" class="img-thumbnail" alt="hotel-detail" height="350" width="320">
+          </div>
+          <div class="col-xs-6">
+            Mouse over <font style="color: blue"><i>BLUE</i></font> points, a gray box will pop up showing the details of the current hotel, including yelp rating, price and review counts.
+            <br><br>
+            A <b>histogram</b> of top 5 restaurant categories with highest counts around current hotel will also be displayed.
+          </div>
+        </section>
+        <section class="row">
+          <div class="col-xs-6">
+            <img src="data/topRes.png" class="img-thumbnail" alt="topRestaurant" height="350" width="350">
+          </div>
+          <div class="col-xs-6">
+            <div class="row">
+              The <font style="color: blue"><i>blue</i></font> point is clickable. If you click on it, a blue circle representing the area within 100 meter radius of the hotel will show up.
+              <br><br>
+              The gray information box also will list out the top 3 (calculated based on rating and review count) restaurants within the circled area, and their representing points on the map will be colored <font style="color: #F9CE00"><i>yellow</i></font>.
+            </div>
+            <div class="row">
+              <img src="data/circle.png" class="img-thumbnail" alt="hotel-circle" height="130" width="150">
+            </div>
+          </div>
+        </section>
+        <section class="row">
+          <div class="col-xs-12">
+            <img src="data/instructionbar.png" class="img-thumbnail" alt="blueCircle-Hotel">
+          </div>
+          <div class="col-xs-12">
+            <center><h5>To see the <b><i>Instruction</i></b> again, please click the button at the <b>right top</b> corner.</h5></center>
+          </div>
+        </section>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -149,10 +203,7 @@ $(function () {
 var $map = $("#map");
 var map = new google.maps.Map($map[0], {
   zoom: 16.5,
-  //scrollwheel: false,
-  //disableDoubleClickZoom: true,
   clickableIcons: false,
-  //draggable: false,
   center: new google.maps.LatLng(40.759,-73.985),
   mapTypeId: google.maps.MapTypeId.TERRAIN    
 });
@@ -214,72 +265,68 @@ overlay.onAdd = function () {
       .attr("center", path)
       .attr("class", "food")
       .attr("id", function(d){return d.properties.ID;})
-      //.attr("id", function(d){return d.properties.CompanyName;})
       .on("mouseover", function (d) {
-        var mousePosition = d3.svg.mouse(this);
+        //var mousePosition = d3.svg.mouse(this);
         $("#quake-pop-up").fadeOut(100, function () {
           // Popup content
           $("#quake-pop-up-title").html(d.properties.CompanyName);
-          //$("#quake-pop-img").html(d.properties.mag);
-          var price = "NA";
-          if(d.properties.Price!="NA")
-            price = Array(parseInt(d.properties.Price)+1).join("$");
-
-          $("#quake-pop-desc").html(
-            `Address: ${d.properties.Address}<br/>`+
-            "Phone: "+formatPhoneNumber(d.properties.Phone)+"<br/>"+
-            "Yelp Rating: "+d.properties.Rating+"<br/>"+
-            "Yelp Review Count: "+d.properties.Review+"<br/>"+
-            "Yelp Price: "+price+"<br/>"
+          $("#quake-pop-desc").html(`
+            Category: ${d.properties.YelpCategory}<br/>
+            Address: ${d.properties.Address}<br/>
+            Phone: ${formatPhoneNumber(d.properties.Phone)}<br/>
+            Yelp Rating: ${d.properties.Rating}<br/>
+            Yelp Review Count: ${d.properties.Review}<br/>
+            Yelp Price: ${formatPrice(d.properties.Price)}<br/>
+            `
           );
+          d3.select("#quake-pop-hist svg").remove();
           $("#quake-pop-up").fadeIn(100);
         });
       })
       .on("mouseout", function () {
+        d3.select("#quake-pop-hist svg").remove();
         $("#quake-pop-up").fadeOut(50);
       });
-      /*.on("click", function(d) {
-        if (clicked_pt_id != "") {
-          $(clicked_pt_id).attr("d", $(clicked_pt_id).attr("center"));
-          // var clicked_pt = d3.selectAll(clicked_pt_id)
-          // clicked_pt.attr("d",  clicked_pt.attr("center"));
-        }
-        clicked_pt_id = "#"+d.properties.ID;
-        //var pt = d3.select("#"+d.properties.ID)
-        d3.select("#"+d.properties.ID)
-          .transition().duration(1000)
-          .attr("d", path.pointRadius(function (d) {
-            return Math.sqrt((Math.exp(parseFloat(8.9)))); 
-          }));
-      });*/
 
     my_pt.selectAll("dummy_path") //  Hotel
       .data(hotel_json.features) 
       .enter().append("svg:path")
-      //.attr("d", path)
       .attr("d", path.pointRadius(Math.sqrt((Math.exp(parseFloat(4))))))
       .attr("center", path.pointRadius(Math.sqrt((Math.exp(parseFloat(4))))))
       .attr("class","hotel") 
       .attr("id", function(d){return d.properties.ID;})                  
       .on("mouseover", function (d) {
+        d3.select(this).style("fill-opacity", 0.4);
         if(d3.select(this).attr("d")!= d3.select(this).attr("center")){
-          //alert(marked_food_id);
           $("#quake-pop-up").fadeOut(100, function () {
-            // Popup content
             $("#quake-pop-up-title").html("Top Restaurants Near "+d.properties.CompanyName);
-            //$("#quake-pop-img").html(d.properties.mag);
             marked_food_id = (d.properties.top3restaurant).split("|");
-            $("#quake-pop-desc").html(marked_food_id.join(" | "));
+            $("#quake-pop-desc").html(function(){
+              var html_str = ""
+              for(i in marked_food_id){
+                //console.log(marked_food_id[i]);
+                food_d = d3.select(`#${marked_food_id[i]}`).data()[0];
+                html_str += `
+                  === ${food_d.properties.CompanyName} === <br/>
+                  Category: ${food_d.properties.YelpCategory}<br/>
+                  Address: ${food_d.properties.Address}<br/>
+                  Phone: ${formatPhoneNumber(food_d.properties.Phone)}<br/>
+                  Yelp Rating: ${food_d.properties.Rating}<br/>
+                  Yelp Review Count: ${food_d.properties.Review}<br/>
+                  Yelp Price: ${formatPrice(food_d.properties.Price)}<br/><br/>
+                `
+              }
+              return html_str
+            });
+            d3.select("#quake-pop-hist svg").remove();
             $("#quake-pop-up").fadeIn(100);
           });
         }
         else {
-          var mousePosition = d3.svg.mouse(this);
-          //var format = d3.time.format("%Y-%m-%d %HH:%MM:%SS");
+          //var mousePosition = d3.svg.mouse(this);
           $("#quake-pop-up").fadeOut(100, function () {
             // Popup content
             $("#quake-pop-up-title").html(d.properties.CompanyName);
-            //$("#quake-pop-img").html(d.properties.mag);
             var price = "NA";
             if(d.properties.Price!="NA")
               price = Array(parseInt(d.properties.Price)+1).join("$");
@@ -291,16 +338,35 @@ overlay.onAdd = function () {
               "Yelp Review Count: "+d.properties.Review+"<br/>"+
               "Yelp Price: "+price+"<br/>"
             );
+            $("#quake-pop-hist").html(function(){
+              var pairs = d.properties.top5cat.split("|")
+              var cat = [], bardata = [];
+
+              for(i in pairs){
+                tmp = pairs[i].split(":");
+                cat.push(tmp[0]);
+                if(tmp.length == 1) 
+                  bardata.push(0);
+                else
+                  bardata.push(tmp[1]);
+              }
+              createHistogram(cat, bardata);
+            });
+            
             $("#quake-pop-up").fadeIn(100);
           });
         }
       })
       .on("mouseout", function () {
         $("#quake-pop-up").fadeOut(50);
+        d3.select("#quake-pop-hist svg").remove();
+        if("#"+d3.select(this).attr("id") == clicked_hotel_id)
+          d3.select(this).style("fill-opacity", 0.2);
+        else
+          d3.select(this).style("fill-opacity", 0.6);
       })
       .on("click", function(d) {
         if (clicked_hotel_id != "") {
-          //$(clicked_hotel_id).attr("d", $(clicked_hotel_id).attr("center"));
           var clicked_pt = d3.selectAll(clicked_hotel_id)
           clicked_pt.transition().duration(500)
             .attr("d",  clicked_pt.attr("center"))
@@ -317,21 +383,36 @@ overlay.onAdd = function () {
             lat = d.properties.Latitude;
             zoom = map.getZoom();
             metersPerPx = 156543.03392 * Math.cos(lat * Math.PI / 180) / Math.pow(2, zoom)
-            //alert(Math.sqrt((Math.exp(parseFloat(8.9*map.getZoom()/17)))));
             return (100/metersPerPx); 
           }))
           .style("fill-opacity", 0.2);
 
         $("#quake-pop-up").fadeOut(100, function () {
           // Popup content
-          $("#quake-pop-up-title").html("Top Restaurants Near "+d.properties.CompanyName);
-          //$("#quake-pop-img").html(d.properties.mag);
-          $("#quake-pop-desc").html(marked_food_id.join(" | "));
+          $("#quake-pop-up-title").html(`Top Restaurants Near ${d.properties.CompanyName}`);
+          $("#quake-pop-desc").html(function(){
+            //marked_food_id.join(" | ")
+            var html_str = ""
+            for(i in marked_food_id){
+              //console.log(marked_food_id[i]);
+              food_d = d3.select(`#${marked_food_id[i]}`).data()[0];
+              html_str += `
+                === ${food_d.properties.CompanyName} === <br/>
+                Category: ${food_d.properties.YelpCategory}<br/>
+                Address: ${food_d.properties.Address}<br/>
+                Phone: ${formatPhoneNumber(food_d.properties.Phone)}<br/>
+                Yelp Rating: ${food_d.properties.Rating}<br/>
+                Yelp Review Count: ${food_d.properties.Review}<br/>
+                Yelp Price: ${formatPrice(food_d.properties.Price)}<br/><br/>
+              `
+            }
+            return html_str
+          });
+          d3.select("#quake-pop-hist svg").remove();
           $("#quake-pop-up").fadeIn(100);
         });
       });
     };
-  //createHistogram(collection, quakes);
 };
 
 overlay.setMap(map);
@@ -342,11 +423,71 @@ function formatPhoneNumber(s) {
   return (!m) ? null : "(" + m[1] + ") " + m[2] + "-" + m[3];
 }
 
+function formatPrice(p) {
+  var price = "NA";
+  if(p != "NA")
+    price = Array(parseInt(p)+1).join("$");
+  return price
+}
+
+function createHistogram(cat, bardata){
+  d3.select("#quake-pop-hist svg").remove();
+  var w = 400;
+  var h = 300;
+  var margin = {top: 25, right: 25, bottom: 25, left: 25};
+  var innerWidth = w - margin.left - margin.right;
+  var innerHeight = h - margin.top - margin.bottom;
+  var svg = d3.select("#quake-pop-hist")
+      .append("svg")
+      .attr("width", w)
+      .attr("height", h);
+
+  var xScale = d3.scaleBand()
+      .domain(d3.range(cat.length))
+      .range([0, innerWidth])
+      .paddingInner(.3);
+
+  var yScale = d3.scaleLinear()
+      .domain([0, d3.max(bardata)])
+      .range([innerHeight, 0]);
+
+  var yAxis = d3.axisLeft()                       
+      .scale(yScale);
+
+  var bars = svg.append("g")
+      .attr("id", "plot")                         
+      .attr("transform", `translate (${margin.left+10}, ${margin.top})`)
+      .selectAll("rect")
+      .data(bardata);
+  
+  bars.enter().append("rect")
+      .attr("x", (d, i) => xScale(i))
+      .attr("y", d => yScale(d))
+      .attr("width", xScale.bandwidth())
+      .attr("height", d => innerHeight - yScale(d))
+      .attr("fill", "#DBEDF3")
+      .style("fill-opacity", .8);
+  
+  svg.append("g")                                  
+      .attr("class", "yAxis")
+      .attr("transform", `translate (${margin.left}, ${margin.top})`)
+      .call(yAxis);
+  
+  var xAxis = d3.axisBottom()
+      .scale(d3.scaleBand().domain(cat).range([0, innerWidth]).paddingInner(.3));
+  
+  svg.append("g")                                  
+      .attr("class", "xAxis")
+      .attr("transform", `translate (${margin.left+8}, ${innerHeight + margin.top})`)
+      .call(xAxis);
+}
+
+
 });
 </script>
 <style type="text/css">
 header {padding-top: 52px;}
-#map {height: 95vh; width:98.5vw;}
+#map {height: 95vh; width:100vw;}
 footer {background-color: #808080; color: white; padding-top:0.5em;}
   
 .SvgOverlay{position:relative;width:100%;height:100%}
@@ -356,38 +497,12 @@ footer {background-color: #808080; color: white; padding-top:0.5em;}
 .SvgOverlay path.hotel {fill: blue; fill-opacity: .6;}
 .SvgOverlay path:hover {fill-opacity: .8;}
 
+#quake-pop-up{display:none;position:absolute;color:white;font-size:14px;background:rgba(0,0,0,.5);padding:5px 10px 5px 10px;-moz-border-radius:5px 5px;border-radius:5px 5px;z-index:99;right:0;top:60px}
+#quake-pop-up-title{font-size:15px;width:100%;margin-bottom:4px;font-weight:bolder}
+#quake-pop-up-content{font-size:14px}
+#quake-pop-desc{margin-left:10px;color:white}
 
-#quake-pop-up {
-  display: none;
-  position:absolute;
-  color: white;
-  font-size: 14px;
-  background: rgba(0,0,0,0.5);
-  padding: 5px 10px 5px 10px;
-  -moz-border-radius: 5px 5px;
-  border-radius: 5px 5px;
-  z-index: 99;
-  right: 0;
-  top: 60px;
-}
-#quake-pop-up-title {
-  font-size: 15px;
-  width:100%;
-  margin-bottom: 4px;
-  font-weight: bolder;
-}
-#quake-pop-up-content {
-  font-size: 14px;
-}
-#quake-pop-desc {
-  margin-left: 10px;
-  /*width: 300px;*/
-  color: white;
-}
-#quake-pop-img {
-  font-size: 30px;
-  font-weight: bolder;
-  color: white;
-}
+#myModal .modal-body section.row{padding: 1em;}
+#myModal .modal-body section.row:hover{background-color: rgba(240, 255, 243, 1);}
 </style>
 </html>
