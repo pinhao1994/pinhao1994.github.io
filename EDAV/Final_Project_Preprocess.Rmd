@@ -1,0 +1,373 @@
+---
+title: "Final_Project_phc2121"
+author: "Pin-Hao Chen | phc2121"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r YelpAPI}
+library(tidyverse)
+library(httr)
+
+yelpSearch <- function(query){
+  # Input:
+  #   query: list(key=value, ...)
+  #     key: [term, location, phone, category]
+  #     value: string
+  #     more detail: https://www.yelp.com/developers/documentation/v3/business_search
+  #                  https://www.yelp.com/developers/documentation/v3/business_search_phone
+  #
+  # Output:
+  #     dataframe of results
+  
+  yelpHttrParse <- function(x) {
+  
+    parse_list <- list(#id = x$id, 
+                       name = x$name, 
+                       rating = x$rating, 
+                       review_count = x$review_count, 
+                       latitude = x$coordinates$latitude, 
+                       longitude = x$coordinates$longitude, 
+                       address1 = x$location$address1, 
+                       address2 = x$location$address2,
+                       address3 = x$location$address3,
+                       zip_code=x$location$zip_code,
+                       city = x$location$city, 
+                       state = x$location$state, 
+                       distance = x$distance,
+                       phone=x$phone,
+                       price=x$price,
+                       category=x$categories)
+    
+    parse_list <- lapply(parse_list, FUN = function(x) ifelse(is.null(x), "", x))
+    
+    df <- data_frame(#id=parse_list$id,
+                     name=parse_list$name, 
+                     rating = parse_list$rating, 
+                     review_count = parse_list$review_count, 
+                     latitude=parse_list$latitude, 
+                     longitude = parse_list$longitude, 
+                     address1 = parse_list$address1,
+                     zip_code = parse_list$zip_code,
+                     #address2 = parse_list$address2,
+                     #address3 = parse_list$address3,
+                     #city = parse_list$city, 
+                     #state = parse_list$state,
+                     phone=parse_list$phone,
+                     price=parse_list$price,
+                     category=parse_list$category)
+    df
+  }
+    
+  # main code
+  api_key <- "8wxko2lI5Kj-2jHK0u6DSz2A6Pc_cbZ7wvFqYl02i7MDChwz57_Ctf4o7W1XxM_j0crIKQgCbNJmG88D6Qo8XBuM5Vc6eiPVS6-4zgMNlmmdYzL3hGO_oZfox_CzWnYx"
+  
+  if ("phone" %in% names(query)) {
+    path <- c("v3", "businesses", "search", "phone")
+    if (!grepl("^\\+1", query$phone)) {
+      query$phone <- paste("+1", query$phone, sep="")
+    }
+    url <- modify_url("https://api.yelp.com", path = path, query = list(phone=as.character(query$phone)))
+    url_return <- content(GET(url, add_headers('Authorization' = paste("bearer", api_key))))
+    res <- do.call("rbind", lapply(url_return$businesses, FUN = yelpHttrParse))
+    
+    if (is.null(res) & length(query) > 1){
+      query <- query[names(query) != "phone"]
+    }
+    else {
+      return(res)
+    }
+  }
+  
+  path <- c("v3", "businesses", "search")
+  url <- modify_url("https://api.yelp.com", path = path, query = query)
+  url_return <- content(GET(url, add_headers('Authorization' = paste("bearer", api_key))))
+  #return(url_return)
+  return(do.call("rbind", lapply(url_return$businesses, FUN = yelpHttrParse)))
+}
+```
+
+```{r YelpAPI-Test}
+res1 <- yelpSearch(query=list(phone="2122390160"))
+res2 <- yelpSearch(query = list(term="Europa cafe", location="3 Time sq, New York, NY 10036", category="cafe,deli", limit=10))
+res3 <- yelpSearch(query = list(term="Europa cafe", location="3 Time sq, New York, NY 10036", phone="2122390160", category="cafe,deli", limit=10))
+```
+
+```{r Preprocess-Hotel}
+df_hotel <- read.csv("data/Times_Square_Hotels.csv", na.strings=c("", " "))
+df_hotel$Phone <- sapply(df_hotel$Phone, function(x) gsub("\\(","", gsub("\\)","",gsub("-","",gsub(" ","",x)))))
+df_hotel <- df_hotel %>%
+  select(-Website, -Location.1, -Borough)
+```
+
+```{r Preprocess-Food}
+df_food <- read.csv("data/Times_Square_Food_Beverage_Locations.csv", na.strings=c("", " "))
+
+levels(df_food$Subindustry) <- c(levels(df_food$Subindustry), "Deli", levels(df_food$Sub.Subindustry))
+df_food[(df_food$Subindustry=="Caf̩ / Deli"),]$Subindustry <- "Deli"
+df_food[(df_food$Subindustry=="Quick Serve" | df_food$Subindustry=="Full Serve"),]$Subindustry <- df_food[(df_food$Subindustry=="Quick Serve" | df_food$Subindustry=="Full Serve"),]$Sub.Subindustry
+df_food$Phone <- lapply(df_food$Phone, function(x) gsub("\\(","", gsub("\\)","",gsub("-","",gsub(" ","",x)))))
+
+df_food <- df_food %>%
+  select(-Sub.Subindustry, -Location.1, -Borough, -Website)
+```
+
+```{r longitude-latitude}
+haversine <- function(lon1, lat1, lon2, lat2) {
+  lon1 <- lon1 * pi / 180
+  lat1 <- lat1 * pi / 180
+  lon2 <- lon2 * pi / 180
+  lat2 <- lat2 * pi / 180
+  dlon <- lon2 - lon1
+  dlat <- lat2 - lat1
+  a <- sin(dlat / 2)^2 + cos(lat1) * cos(lat2) * sin(dlon / 2)^2
+  c <- 2 * asin(sqrt(a))
+  r <- 6371 # average radius of the Earth 
+  return(c * r * 1000) # unit: meter
+}
+
+similarityLatLon <- function(lon1, lat1, yelp_df , distance) {
+  candidate <- c()
+  if(is.na(lon1) | is.na(lat1)){
+    return(yelp_df)
+  }
+  for (row in 1:nrow(yelp_df)) {
+    if(is.na(yelp_df[row, "longitude"]) | is.na(yelp_df[row, "latitude"])){
+      next
+    }
+    if(haversine(lon1, lat1, yelp_df[row, "longitude"], yelp_df[row, "latitude"])<=distance) {
+      candidate <- c(candidate, row)
+    }
+  }
+  return(yelp_df[candidate,])
+}
+```
+
+```{r lev-distance}
+levDist <- function(str0, str1) {
+  m <- nchar(str0)
+  n <- nchar(str1)
+  
+  v0 <- seq(n+1)
+  v1 <- seq(n+1)  
+
+  for (i in 1:m) {
+    v1[1] <- i + 1
+    for (j in 1:n) {
+      deletion_cost <- v0[j+1] + 1
+      insertion_cost <- v1[j] + 1
+      if (substr(str0,i,i) == substr(str1,j,j)) {
+        substitution_cost = v0[j]
+      }
+      else {
+        substitution_cost = v0[j] + 1
+      }
+      v1[j+1] <- min(deletion_cost, insertion_cost, substitution_cost)
+    }
+    v0 <- v1
+  }
+  
+  score <- 1 - ((v0[n+1]-1) / (v0[1]-1))
+  return(score)
+}
+
+cleanWords <- function(string) {
+  string <- gsub("\\s+", " ", gsub("New York","", gsub("Times Square","", gsub("The", "", gsub("Hotel", "", gsub(",", "", gsub("-","",string)))))))
+  return(string)
+}
+
+similarityName <- function(str0, yelp_df) {
+  candidate <- c()
+
+  for (row in 1:nrow(yelp_df)) {
+    str1 <- cleanWords(yelp_df[row, "name"])
+    str0 <- cleanWords(str0)
+    
+    if(levDist(str0, str1)>=0.75) {
+      candidate <- c(candidate, row)
+    }
+  }
+  
+  if (length(candidate) == 0){
+    return(yelp_df)
+  }else{
+    return(yelp_df[candidate,])
+  }
+}
+```
+
+```{r Join-Table}
+joinYelp <- function(df) {
+  isFood <- FALSE
+  if ("Subindustry" %in% colnames(df)) {
+    isFood <- TRUE
+  }
+  for (row in 1:nrow(df)) {
+    #print(row)
+    query <- list(term=df[row, "Company.Name"],
+                          location=paste(df[row, "Address"], paste("New York, NY", df[row, "Postcode"])),
+                          phone=df[row, "Phone"],
+                          category="hotel",
+                          limit=20) 
+    if (isFood) {
+      query$category <- df[row, "Subindustry"]
+    }
+    res <- yelpSearch(query=query)
+    if (is.null(nrow(res))) {
+      df[row, "Rating"] <- NA
+      df[row, "Review"] <- NA
+      df[row,"Price"] <- NA
+      df[row, "Yelp.Category"] <- NA
+    }
+    else if (nrow(res) == 1) {
+      df[row, "Rating"] <- res$rating
+      df[row, "Review"] <- res$review_count
+      df[row,"Price"] <- nchar(res$price)
+      df[row, "Yelp.Category"] <- res[1, "category"]
+    }
+    else {
+      res <- similarityLatLon(df[row, "Longitude"], df[row, "Latitude"], res, 100)
+      if (nrow(res) == 1) {
+        df[row, "Rating"] <- res$rating
+        df[row, "Review"] <- res$review_count
+        df[row,"Price"] <- nchar(res$price)
+        df[row, "Yelp.Category"] <- res[1, "category"]
+      }
+      else if (nrow(res) > 1) {
+        #print(as.character(df[row, "Company.Name"]))
+        res <- similarityName(as.character(df[row, "Company.Name"]), res)
+        if(nrow(res) == 1) {
+          df[row, "Rating"] <- res$rating
+          df[row, "Review"] <- res$review_count
+          df[row,"Price"] <- nchar(res$price)
+          df[row, "Yelp.Category"] <- res[1, "category"]
+        }
+        else {
+          print(as.character(df[row, "Company.Name"]))
+          print(res)
+          manual_select <- readline(prompt="Select the row (0 for average): ")
+          manual_select <- as.integer(manual_select)
+          if (manual_select == 0 | manual_select > nrow(res)) {
+            df[row, "Rating"] <- round(mean(res$rating, na.rm=TRUE),1)
+            df[row, "Review"] <- round(mean(res$review_count, na.rm=TRUE))
+            df[row,"Price"] <- round(mean(nchar(res$price), na.rm=TRUE),1)
+            df[row, "Yelp.Category"] <- res[1, "category"]
+          }
+          else {
+            df[row, "Rating"] <- res[manual_select, "rating"]
+            df[row, "Review"] <- res[manual_select, "review_count"]
+            df[row,"Price"] <- nchar(res[manual_select, "price"])
+            df[row, "Yelp.Category"] <- res[manual_select, "category"]
+          }
+        }
+      }
+      else {
+        df[row, "Rating"] <- NA
+        df[row, "Review"] <- NA
+        df[row,"Price"] <- NA
+        df[row, "Yelp.Category"] <- NA
+      }
+    }
+  }
+  
+  return(df)
+}
+```
+
+```{r}
+df_food <- joinYelp(df_food)
+df_hotel <- joinYelp(df_hotel)
+```
+
+```{r food-to-hotel}
+for(row in 1:nrow(df_food)) {
+  if (!is.na(df_food[row, "Longitude"]) & !is.na(df_food[row, "Latitude"])) {
+    dist <- haversine(df_food[row, "Longitude"], df_food[row, "Latitude"], df_hotel$Longitude, df_hotel$Latitude)
+    
+    df_food[row, "Hotel.Rating(~100)"] <- sum(df_hotel[dist<=100, "Rating"], na.rm=TRUE)/nrow(df_hotel[dist<=100,])
+    df_food[row, "Hotel.Price(~100)"] <- sum(df_hotel[dist<=100, "Price"], na.rm=TRUE)/nrow(df_hotel[dist<=100,])
+    df_food[row, "Hotel.Review(~100)"] <- sum(df_hotel[dist<=100, "Review"], na.rm=TRUE)/nrow(df_hotel[dist<=100,])
+    df_food[row, "Hotel.Count(~100)"] <- nrow(df_hotel[dist<=100,])
+    
+    df_food[row, "Hotel.Rating(~200)"] <- sum(df_hotel[dist<=200, "Rating"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Price(~200)"] <- sum(df_hotel[dist<=200, "Price"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Review(~200)"] <- sum(df_hotel[dist<=200, "Review"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Count(~200)"] <- nrow(df_hotel[dist<=200,])
+    
+    df_food[row, "Hotel.Rating(200~400)"] <- sum(df_hotel[(dist>200 & dist<=400), "Rating"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Price(200~400)"] <- sum(df_hotel[(dist>200 & dist<=400), "Price"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Review(200~400)"] <- sum(df_hotel[(dist>200 & dist<=400), "Review"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Count(200~400)"] <- nrow(df_hotel[(dist>200 & dist<=400),])
+    
+    df_food[row, "Hotel.Rating(400~600)"] <- sum(df_hotel[(dist>400 & dist<=600), "Rating"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Price(400~600)"] <- sum(df_hotel[(dist>400 & dist<=600), "Price"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Review(400~600)"] <- sum(df_hotel[(dist>400 & dist<=600), "Review"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Count(400~600)"] <- nrow(df_hotel[(dist>400 & dist<=600),])
+    
+    df_food[row, "Hotel.Rating(600~800)"] <- sum(df_hotel[(dist>600 & dist<=800), "Rating"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Price(600~800)"] <- sum(df_hotel[(dist>600 & dist<=800), "Price"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Review(600~800)"] <- sum(df_hotel[(dist>600 & dist<=800), "Review"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Count(600~800)"] <- nrow(df_hotel[(dist>600 & dist<=800),])
+    
+    df_food[row, "Hotel.Rating(800~)"] <- sum(df_hotel[dist>800, "Rating"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Price(800~)"] <- sum(df_hotel[dist>800, "Price"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Review(800~)"] <- sum(df_hotel[dist>800, "Review"], na.rm=TRUE)/nrow(df_hotel[dist<=200,])
+    df_food[row, "Hotel.Count(800~)"] <- nrow(df_hotel[dist>800,])
+  }
+}
+```
+
+```{r hotel-to-food}
+for(row in 1:nrow(df_hotel)) {
+  if (!is.na(df_hotel[row, "Longitude"]) & !is.na(df_hotel[row, "Latitude"])) {
+    dist <- haversine(df_hotel[row, "Longitude"], df_hotel[row, "Latitude"], df_food$Longitude, df_food$Latitude)
+    
+    df_hotel[row, "Food.Rating(~100)"] <- sum(df_food[dist<=100, "Rating"], na.rm=TRUE)/nrow(df_food[dist<=100,])
+    df_hotel[row, "Food.Price(~100)"] <- sum(df_food[dist<=100, "Price"], na.rm=TRUE)/nrow(df_food[dist<=100,])
+    df_hotel[row, "Food.Review(~100)"] <- sum(df_food[dist<=100, "Review"], na.rm=TRUE)/nrow(df_food[dist<=100,])
+    df_hotel[row, "Food.Count(~100)"] <- nrow(df_food[dist<=100,])
+    
+    df_hotel[row, "Food.Rating(~200)"] <- sum(df_food[dist<=200, "Rating"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Price(~200)"] <- sum(df_food[dist<=200, "Price"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Review(~200)"] <- sum(df_food[dist<=200, "Review"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Count(~200)"] <- nrow(df_food[dist<=200,])
+    
+    df_hotel[row, "Food.Rating(200~400)"] <- sum(df_food[(dist>200 & dist<=400), "Rating"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Price(200~400)"] <- sum(df_food[(dist>200 & dist<=400), "Price"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Review(200~400)"] <- sum(df_food[(dist>200 & dist<=400), "Review"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Count(200~400)"] <- nrow(df_food[(dist>200 & dist<=400),])
+    
+    df_hotel[row, "Food.Rating(400~600)"] <- sum(df_food[(dist>400 & dist<=600), "Rating"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Price(400~600)"] <- sum(df_food[(dist>400 & dist<=600), "Price"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Review(400~600)"] <- sum(df_food[(dist>400 & dist<=600), "Review"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Count(400~600)"] <- nrow(df_food[(dist>400 & dist<=600),])
+    
+    df_hotel[row, "Food.Rating(600~800)"] <- sum(df_food[(dist>600 & dist<=800), "Rating"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Price(600~800)"] <- sum(df_food[(dist>600 & dist<=800), "Price"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Review(600~800)"] <- sum(df_food[(dist>600 & dist<=800), "Review"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Count(600~800)"] <- nrow(df_food[(dist>600 & dist<=800),])
+    
+    df_hotel[row, "Food.Rating(800~)"] <- sum(df_food[dist>800, "Rating"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Price(800~)"] <- sum(df_food[dist>800, "Price"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Review(800~)"] <- sum(df_food[dist>800, "Review"], na.rm=TRUE)/nrow(df_food[dist<=200,])
+    df_hotel[row, "Food.Count(800~)"] <- nrow(df_food[dist>800,])
+  }
+}
+```
+
+```{r export-to-csv}
+df_food$Yelp.Category <- sapply(df_food$Yelp.Category, function(x) x[[1]])
+df_food$Yelp.Category[df_food$Yelp.Category=="NULL"] <- NA
+df_food$Yelp.Category <- unlist(df_food$Yelp.Category)
+df_food$Phone <- unlist(df_food$Phone)
+df_food$Price[df_food$Price == 0] <- 1
+write.csv(df_food, file = "food.csv", sep=",", row.names=FALSE)
+
+df_hotel$Yelp.Category <- sapply(df_hotel$Yelp.Category, function(x) x[[1]])
+df_hotel$Phone <- unlist(df_hotel$Phone)
+df_hotel$Price[df_hotel$Price == 0] <- 1
+write.csv(df_hotel, file = "hotel.csv", sep=",", row.names=FALSE)
+```

@@ -1,0 +1,85 @@
+---
+title: "Final_Project_Map"
+author: "Pin-Hao Chen | phc2121"
+date: "4/1/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
+
+# Read Data
+```{r}
+library(tidyverse)
+library(data.table)
+df_food <- read.csv("data_r/food.csv")[1:17] 
+setnames(df_food, old = c('Company.Name','Yelp.Category'), new = c('CompanyName','YelpCategory'))
+df_food$ID <- paste("food", rownames(df_food), sep="_")
+df_food$Address <- paste(df_food$Address, paste("New York, NY", df_food$Postcode), sep=", ")
+df_food <- df_food %>%
+  select(-Community.Board, -Community.Council, -Census.Tract, -BIN, -BBL, -NTA, -Postcode)
+
+
+df_hotel <- read.csv("data_r/hotel.csv")[1:16] 
+setnames(df_hotel, old = c('Company.Name','Yelp.Category'), new = c('CompanyName','YelpCategory'))
+df_hotel$ID <- paste("hotel", rownames(df_hotel), sep="_")
+df_hotel$Address <- paste(df_hotel$Address, paste("New York, NY", df_hotel$Postcode), sep=", ")
+df_hotel <- df_hotel %>%
+  select(-Community.Board, -Community.Council, -Census.Tract, -BIN, -BBL, -NTA, -Postcode)
+
+```
+
+```{r}
+haversine <- function(lon1, lat1, lon2, lat2) {
+  lon1 <- lon1 * pi / 180
+  lat1 <- lat1 * pi / 180
+  lon2 <- lon2 * pi / 180
+  lat2 <- lat2 * pi / 180
+  dlon <- lon2 - lon1
+  dlat <- lat2 - lat1
+  a <- sin(dlat / 2)^2 + cos(lat1) * cos(lat2) * sin(dlon / 2)^2
+  c <- 2 * asin(sqrt(a))
+  r <- 6371 # average radius of the Earth 
+  return(c * r * 1000) # unit: meter
+}
+```
+
+```{r 100-meter-hotel-to-food}
+res <- setNames(data.frame(matrix(ncol = 2, nrow = 0)), c("hotel_ID", "food_ID"))
+for(row in 1:nrow(df_hotel)) {
+  if (!is.na(df_hotel[row, "Longitude"]) & !is.na(df_hotel[row, "Latitude"])) {
+    dist <- haversine(df_hotel[row, "Longitude"], df_hotel[row, "Latitude"], df_food$Longitude, df_food$Latitude)
+    
+    target <- df_food[dist<=100, ]
+    for(j in 1:nrow(target)) {
+      if (!is.na(target[j, "ID"])) {
+        res <- rbind(res, data.frame(hotel_ID=df_hotel[row, "ID"], food_ID=target[j, "ID"]))
+      }
+    }
+  }
+}
+#write.csv(res, "res.csv", sep=",", row.names=FALSE)
+#write.csv(df_food, "data/food.csv",  sep=",", row.names=FALSE)
+#write.csv(df_hotel %>% select(CompanyName, ID), "hotel_map.csv",  sep=",", row.names=FALSE)
+```
+
+```{r Join-the-100-meter-data}
+hotel_top5_cat <- read.csv("data_r/hotel_top5_cat.csv")
+top3_food_ID<- read.csv("data_r/top3foodID.csv")
+
+df_hotel_final <- inner_join(df_hotel, hotel_top5_cat, by = c("ID" = "Row.Labels"))
+df_hotel_final <- inner_join(df_hotel_final, top3_food_ID, by = c("ID" = "hotel_ID"))
+```
+
+```{r join-5-continents}
+food_new_cat <- read.csv("data_r/food_processed.csv") %>%
+  select(ID, Category_2nd_Level)
+food_new_cat$Category_2nd_Level
+df_food_final <- inner_join(df_food, food_new_cat, by=c("ID", "ID"))
+```
+
+```{r}
+write.csv(df_food_final, "data_r/food_final.csv",  sep=",", row.names=FALSE)
+write.csv(df_hotel_final, "data_r/hotel_final.csv",  sep=",", row.names=FALSE)
+```
