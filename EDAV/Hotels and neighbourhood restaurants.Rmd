@@ -1,0 +1,49 @@
+---
+title: "Hotels and neighbourbood"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r message=FALSE}
+library(tidyverse)
+library(ggplot2)
+
+
+hf100 <- read.csv("~/Downloads/hotel_food_100.csv")
+hf <- na.omit(hf100)
+
+ggplot(hf, aes(food_price)) +
+  geom_histogram(binwidth = 1, color ="blue", fill = "lightblue") +
+  facet_wrap(~hotel_price) +
+  ggtitle("Price distribution of hotels and neighbourhood restaurants") +
+  xlab("Dollar sign of restaurants") + 
+  ylab("Counts of hotels within 100^2pi sq meters") +
+  stat_bin(aes(y=..count.., label=..count..), geom="text", vjust=-.5, binwidth = 1) 
+
+
+ggplot(hf, aes(food_rating)) +
+  geom_histogram(binwidth = 1, color ="blue", fill = "lightblue") +
+  facet_wrap(~hotel_rating2, nrow = 2) +
+  ggtitle("Rating distribution of hotels and neighbourhood restaurants") +
+  xlab("Rating level of restaurants") + 
+  ylab("Counts of hotels within 100^2pi sq meters") +
+  stat_bin(aes(y=..count.., label=..count..), geom="text", vjust=-.5, binwidth = 1) 
+
+ggplot(hf, aes(x = food_price,y = food_review_count)) +
+  geom_col(fill = "lightblue") +
+  facet_wrap(~hotel_rating2, nrow = 2) +
+  ggtitle("Review Counts of hotels and neighbourhood restaurants") +
+  xlab("Review Counts of restaurants") + 
+  ylab("Counts of hotels within 100^2pi sq meters") 
+```
+
+We could find some interesting facts here. 
+1) The higher the rating of the restaurant it is, it is not necessary that the ratings of the neighbourhood restaurants are higher.
+Taking the rating level 5 as an example, there are not that many reviews nor high ratings. One of the reasons might be not that many restaurants rated as 5 or 1. A lot of the hotels are rated as level 3.
+2) There are a lot of restaurants rated as level 3, and the majority of neighbourhood restaurants around level 3 hotels are also on level 3.
+3) The restaurants in Time Square are not too expensive. The most expensive ones are with three dollar signs. 
+4. The distributions of each price level of hotels are very similar. 4 dollar sign restaurants are very rare, and the proportion of 2 dollar sign restaurants is nearly 50% of the data at each level. 
+5) Hotels with 2 dollar signs have the most counts in Time Square. 
