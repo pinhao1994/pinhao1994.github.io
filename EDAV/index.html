@@ -409,7 +409,7 @@ $(function () {
         .on("click", function(d) {
           if (clicked_hotel_id != "") {
             var clicked_pt = d3.selectAll(clicked_hotel_id)
-            clicked_pt.transition().duration(500)
+            clicked_pt
               .attr("d",  clicked_pt.attr("center"))
               .style("fill-opacity", 0.5);
             $("#"+marked_food_id.join(", #")).css({"fill": "green", "fill-opacity": 0.2});
