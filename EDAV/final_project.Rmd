@@ -1,0 +1,374 @@
+---
+title: "EDAV Final Project - Best @ Times Square"
+author: "Pin-Hao Chen (phc2121) | Youyang Liu (yl3767) | Jolie Tan (jt2998) | Anna Zhou (yz3220)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning= FALSE, message = FALSE, cache = TRUE)
+```
+
+# 1. Introduction
+
+Our project explores the relationship between hotels and restaurants at Times Square based on dataset from NYC open data source with price and rating data from Yelp API. Current applications in the market focuses solely on hotels or restaurants, but we would like to see if there exists interactive correlation between hotels and its surrounding restaurants in terms of price and rating. The results might be an important factor on travelers’ choice on hotel selection, especially in a top tourist site like Times Square. 
+
+Group responsibilities are listed as follow: Pin-Hao Chen—data preprocessing and interactive component designing; Youyang Liu—data exploration and data visualization; Jolie Tan—data preprocessing, data exploration, and data visualization; Anna Zhou—data exploration and interactive component implementing.
+
+# 2. Description of Data
+We download Times Square Food & Beverage Locations and Times Square Hotels datasets from NYC Open Data (https://opendata.cityofnewyork.us/) and fetch Yelp data through Yelp API. The data binding and data wrangle processes are described in following sections.  
+
+## 2.1. Data Cleaning, Yelp Combining, and Calculating
+(R script: https://github.com/pinhao1994/pinhao1994.github.io/blob/master/EDAV/Final_Project_Preprocess.Rmd)
+
+### 2.1.1. Data Cleaning
+First, formating the phone numbers to be a sequence of integer numbers by replacing the special characters, like “(”, “)”, and “-”. Second, removing “Website”, “Location.1”, and “Borough” columns in both dataset due to following reasons:
+
+1. Website column: There are many missing values in the this column and the website links give us pretty limited information. For example, all the Starbucks have the same official website in our original data. This does not allow us to separate or to compare which Starbucks will be better according to the link.
+
+2. Location.1 column: This column contains tuple of latitude and longitude which is duplicate data since there are already two columns containing the same information.
+
+3. Borough column: Since all of our data points are around Times Square, they have same borough -- Manhattan -- which is not informative.
+
+Since Food and Beverage Data is more complicated, there are more processes should be worked on. Third, replacing special unicode character such as  “Café / Deli” with “Deli” in the “Subindustry” column. Forth, substituting the value in “Subindustry” with the value in “Sub.Subindustry” column, if the former value is “Quick Serve” or “Full Serve”. Finally, removing “Sub.Subindustry” column from the dataset since we have combined it with the Subindustry column.
+
+### 2.1.2. Yelp Combining
+We utilizing Yelp API to fetch the “Yelp Category”, “Yelp Rating”, and “Review Count on Yelp”. The program would first search stores (hotels and restaurants) by the Phone Number. Second, if there is no match with phone number, the program will search by the combination of other features, such as Address, category, etc. Last, if the program cannot make the decision, it will pop up 5 candidates for users to manually decide the Yelp store for preprocessing.
+
+### 2.1.3. Caculating
+We deployed levenshtein distance to find the the neighbor of each hotel and restaurant within 100 meters. Moreover, average the Yelp rating, price, and count of all neighbor restaurants for every hotels.
+
+## 2.2. Web Interactive: GeoJson Processing
+(R Script: https://github.com/pinhao1994/pinhao1994.github.io/blob/master/EDAV/Final_Project_Map.Rmd)
+
+In order to perform the web interactive part, we pre-calculate and format the data into self-defined form. 
+
+For Hotel data, we add two more columns top5cat and top3restaurant to store further information as follow:
+
+1. top5cat: Within $100^2 \pi$ square meters, counting what would be the top 5 categories with respect to each hotel. Store the information in the form of "$Category_A:Count_A$ | $Category_B:Count_B$ |...".
+
+2. top3restaurant: Within $100^2 \pi$ square meters, counting what would be the top 3 restaurants with respect to each hotel by our designed importance weight. Store the information in the form of "$food\_id_A$ | $food\_in_B$ | $food\_id_C$".
+
+For Restaurant data, we add one more column called Category2ndlevel. We would like to have our upper level categories to be classified according to continents. So we have Asian, Mid East, North American, South American. Also, we have added other categories, Steakhouse, Coffee, Pizza, Deli, and Other. As for those extra categories, it is ambiguous to classify them to the continental categories, but if we group them into Other, that would cause Other overweighted. 
+
+Last, we transformed csv to geojson by online transformer (https://mygeodata.cloud/converter/csv-to-geojson). Geojson type of data is prepared for the interactive web.
+
+# 3. Data Analaysis Quality
+
+## 3.1. General Distribution
+
+We want to explore the restuarant data gerenally in rating, review, postcode, price,  category and missing data. 
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+food<-read.csv('food_processed.csv')
+
+
+# plot rating distribution
+## from the histgram we know that most of our resturant are rated as 3.0~4.0 and there is no resturant rated as 5. And it's a left-skewed data
+ggplot(data = food, aes(food$Rating)) + geom_histogram(binwidth = 0.5)
+```
+
+From the histgram we know that most of our resturant are rated as 3.0~4.0 and there is no resturant rated as 5. And it's a left-skewed data.
+
+```{r}
+# plot postcode distribution
+
+ggplot(data = food, aes(factor(food$zip_code))) + geom_bar()
+```
+
+From the histgram we can see that most of our resturant located in 10036 and 10019 district. The restuarant in 10011, 10012, 10033 might be outliers.
+
+```{r}
+
+# plot price distribution
+
+ggplot(data = food, aes(food$Price)) + geom_bar()
+```
+
+We can see that tha major resturants have price in 2 and no resturant in 5. Since our price data are dollar sign from yelp API. so the data in 2.5 might be a error data.
+
+```{r}
+# plot review distribution 
+
+ggplot(data = food, aes(food$Review_Count)) + geom_histogram()
+```
+
+From the plot we can see that most of our restuarant review is  below 1000. The higher the review is, the fewer resturant. And there are some outliers that have more than 1000r ratings.
+
+```{r}
+## from this plot we can see that most common category are American, Deli, Italian, Pizza, and steakhouse.
+ggplot(data = food,aes(food$Category_data)) +
+  geom_bar()+coord_flip()
+```
+
+From this plot we can see that, there are 35 categories in total and most common category are American, Deli, Italian, Pizza, and steakhouse.
+
+```{r}
+ggplot(data = food,aes(food$Category_2nd_Level)) +
+  geom_bar()+coord_flip()
+```
+
+According to the second level category, we can see that North American, Deli and Europe are most common 3 category.
+
+## 3.2. Missing Pattern
+
+```{r fig.height=20, fig.width=10}
+#library(tidyverse)
+#library(ggplot2)
+#library(dplyr)
+#library(tidyr)
+#library(DAAG)
+food <- read.csv('food_processed.csv', header=T, na.strings=c("", "NA"))
+
+row.names(food) <- food$ID
+
+tidyfood <- food %>%
+  rownames_to_column("id") %>%
+  gather(key, value, -id) %>%
+  mutate(missing = ifelse(is.na(value), "yes", "no"))
+
+ggplot(tidyfood, aes(x = key, y = fct_rev(id), fill = missing)) +
+  geom_tile(color = "white") + 
+  ggtitle("food data with missing values") +
+  #scale_fill_viridis_d() + # discrete scale
+  theme_bw()
+```
+
+It's obvious that there are 3 missing pattern in our data. The most common one is Price, Rating, Review count and Score lost. And the second is missing category data. The third one is missing them both. The first one is because we cant grab the data in yelp API.
+
+# 4. Main Analysis
+
+```{r}
+# plot rating distribution fill by district(postcode)
+
+ggplot(data = food, aes(food$Rating, fill=factor(food$zip_code))) + geom_histogram(aes(x= food$Rating,y = (..count..)/sum(..count..)), breaks=c(0.0,0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0),
+              position = 'dodge') #+ geom_density(aes(y=..density..),alpha = .3)
+```
+
+We can see that the resturant's rating in district 10036 has a peak around 3.5. And the resturant's rating in distrct 10019 has a peak around 3.0
+
+```{r}
+## For price, there is no much difference in 10019 and 10036, both of the districts have 2 price resturants.
+#ggplot(data = food, aes(food$Price, fill=factor(food$Postcode))) + geom_histogram(aes(x= food$Price), binwidth = 1,position = 'dodge')
+ggplot(data = food, aes(food$Price, fill=factor(food$zip_code))) + geom_histogram(aes(x= food$Price,y = ..density..),binwidth = 1,position = 'dodge')
+# FIX ME LATER! category data need to be clean
+# ### FIX ME: draw density of the plot
+```
+
+For price, there is no much huge difference in 10019 and 10036, both of the districts most have 2 price resturants. But there is no retuarant have 1 price in 10019.
+
+And we can see that 10011, 10012, 10033 only have 1 retuarant in that district, so the density will always be 1.
+
+```{r}
+## plot the review based on postcode.
+ggplot(data = food, aes(food$Review_Count, fill=factor(food$zip_code))) + geom_histogram(position = 'dodge',binwidth = 50) + xlim(0, 800)
+
+## we draw some boxplot to explore the data.
+## we find that restuarnts in 10036 are more likely to have more reviews. 
+
+ggplot(food, aes(factor(food$zip_code), food$Review_Count)) +
+  geom_boxplot() + 
+  coord_flip() 
+## 
+```
+
+For review count, we find that restuarnts in 10036 are more likely to have more reviews. The restuarant in 10018 are more sparse.
+
+```{r}
+## hex plot or scatter plot
+
+ggplot(food,aes(x = Rating,y = Review_Count))+stat_bin_hex()
+ggplot(food,aes(x = Rating,y = Review_Count))+geom_point(position = 'jitter', alpha = .3)
+```
+
+From the plot we can see that, 1. there is a cluster around rating 3~4 and review less that 500. 2. the more review, there is more likely to be high ratings. 3. There is no resturant have more than 600 review that has low ratings. 4. The resturant having over 1000 reviews are outliers and they are all rating 3.5 or 4.0 
+
+```{r}
+# we explore the relationship between price and review
+
+ggplot(food,aes(x = Price,y = Review_Count))+stat_bin_hex()
+ggplot(food,aes(x = Price,y = Review_Count))+geom_point(position = 'jitter', alpha = .3)
+
+```
+
+1.there is a cluster around Price 1-2 and review below 500. 2. Outliers are the points over 1000 reviews and over 3 ratings. 
+
+```{r echo=FALSE}
+## mosiac plot
+#library(vcd)
+
+#data<-subset(food,food$zip_code %in% c(10036,10019,10018,10020))
+#data<- subset(data,data$Price %in% c(1,2,3,4))
+#counts2 <- data%>% drop_na(`zip_code`,`Price`)%>%group_by(data$`Price`,  data$`zip_code`) %>% 
+#    summarize(Freq =n())
+#colnames(counts2)<-c('Price','zip_code','Freq')
+
+#vcd::mosaic(Price~zip_code,direction = c('v','h'),counts2,rot_labels=c(0,90,0,0))
+```
+
+```{r echo=FALSE}
+#data_new<-subset(food,food$zip_code %in% c(10036,10019,10018,10020))
+#data_new<- subset(data_new,data_new$Category_2nd_Level %in% c('North American','Deli','Europe','Asian'))
+
+#data_new<-subset(data_new,data_new$Category_data %in% c('American','Deli','Italian','Coffee'))
+
+
+#try<-data_new%>%drop_na(`zip_code`,`Category_data`)%>%group_by(data_new$`Category_data`,  data_new$`zip_code`) %>% 
+ #   summarize(Freq =n())
+
+
+
+#counts3 <- data_new %>% drop_na(`zip_code`,`Category_2nd_Level`)%>%group_by(data_new$`Category_2nd_level`,  data_new$`zip_code`) %>% summarize(Freq =n())
+
+
+#colnames(try)<-c('Category_data','zip_code','Freq')
+
+#vcd::mosaic(factor(Category_data)~zip_code,direction = c('v','h'),try,rot_labels=c(0,90,0,0))
+```
+
+```{r}
+data_new<-subset(food,food$zip_code %in% c(10036,10019,10018,10020))
+data_new<- subset(data_new,data_new$Category_2nd_Level %in% c('North American','Deli','Europe','Asian'))
+
+
+counts3 <- data_new %>% drop_na(`zip_code`,`Category_2nd_Level`)%>%group_by(data_new$`Category_2nd_Level`,  data_new$`zip_code`) %>% summarize(Freq =n())
+
+colnames(counts3)<-c('Category_data','zip_code','Freq')
+
+vcd::mosaic(factor(Category_data)~zip_code,direction = c('v','h'),counts3,rot_labels=c(0,90,0,0))
+```
+
+From the plot we can see that the majority data lies in 10019 and 10036. And district will influence the retuarants category. We can see that there are more North American  restuarant in 10036, and relatively less other types retuarants.
+
+### Interactive Parallel Coordinate
+
+```{r}
+library(GGally)
+library(ggplot2)
+library(tidyverse)
+
+parallel_data <-food[c(4,5,6,7,8,9,11)]
+
+parallel_data$Category_data<-factor(parallel_data$Category_data)
+#parallel_data$zip_code<-factor(parallel_data$zip_code)
+parallel_data$Category_2nd_Level<-factor(parallel_data$Category_2nd_Level)
+parallel_data$Price<-factor(parallel_data$Price)
+
+#ggparcoord(parallel_data ,alphaLines = .7, groupColumn = 'Category_2nd_Level', scale = "uniminmax")+ylab('Data')+xlab('Indicator')
+#ggparcoord(parallel_data ,alphaLines = .7, groupColumn = 'Category_2nd_Level', scale = "globalminmax")+ylab('Data')+xlab('Indicator')
+#ggparcoord(parallel_data ,alphaLines = .7, groupColumn = 'Category_2nd_Level', scale = "robust")+ylab('Data')+xlab('Indicator')
+#ggparcoord(parallel_data ,alphaLines = .7, groupColumn = 'Category_2nd_Level', scale = "std")+ylab('Data')+xlab('Indicator')
+
+```
+
+```{r fig.width = 11, fig.height = 12.5, fig.align='left'}
+# See: http://www.buildingwidgets.com/blog/2015/1/30/week-04-interactive-parallel-coordinates-1
+devtools::install_github("timelyportfolio/parcoords")
+
+library(parcoords)
+parallel_data<-subset(parallel_data,parallel_data$Review_Count%in%
+                        c(1:1000))
+                  
+
+#parallel_data$zip_code<-factor(parallel_data$zip_code)
+parcoords(parallel_data
+    , rownames = F 
+    , brushMode = "2D-strums"
+    , reorderable = T
+    , queue = T
+    , alpha = .5
+    , color = list(
+      colorBy = "Category_2nd_Level"
+      ,colorScale = htmlwidgets::JS("d3.scale.category10()") 
+    )    
+  )
+
+```
+
+```{r fig.height=15, fig.width=10}
+food_pl <- as.data.frame(food[, c(2,4,5,6,7,8,9,10,11)])
+food_pl$Score <- round(food_pl$Score)
+food_pl$Rating <- round(food_pl$Rating)
+food_pl[, 1:9] <- lapply(food_pl[, 1:9], factor)
+food_plna <- na.omit(food_pl, cols=c("Score"))
+colnames(food_plna)
+food_al <- food_plna %>% 
+  #drop_na(Score) %>%
+  group_by(Category_2nd_Level, Rating, Price, Street_Num, zip_code, Review_Count,Category_data) %>% #
+  summarise(Freq = n())
+
+#tidyfood2 <- food %>% 
+#  group_by(Category_data, Category_2nd_Level, Rating, Review_Count, Street_Num, zip_code) %>%
+#  summarise(n = sum(ID))
+
+#tidyfd <- food %>% rownames_to_column("Name") %>%
+#    gather(key = ID, value = , -Name, -School)
+library(alluvial)
+pal <- RColorBrewer::brewer.pal(10, "Set3")
+alluvial(food_al[, c("Category_2nd_Level", "Rating", "Price", "zip_code")], freq = food_al$Freq, 
+         blocks = TRUE,
+         alpha = 0.8,
+         col = pal[match(food_al$Category_2nd_Level,
+                       unique(food_al$Category_2nd_Level)) ])  
+         
+
+```
+
+# 5. Executive Summary
+
+```{r message=FALSE}
+library(tidyverse)
+library(ggplot2)
+
+
+hf100 <- read.csv("~/Downloads/hotel_food_100.csv")
+hf <- na.omit(hf100)
+
+ggplot(hf, aes(food_price)) +
+  geom_histogram(binwidth = 1, color ="blue", fill = "lightblue") +
+  facet_wrap(~hotel_price) +
+  ggtitle("Price distribution of hotels and neighbourhood restaurants") +
+  xlab("Dollar sign of restaurants") + 
+  ylab("Counts of hotels within 100^2pi sq meters") +
+  stat_bin(aes(y=..count.., label=..count..), geom="text", vjust=-.5, binwidth = 1) 
+
+
+ggplot(hf, aes(food_rating)) +
+  geom_histogram(binwidth = 1, color ="blue", fill = "lightblue") +
+  facet_wrap(~hotel_rating2, nrow = 2) +
+  ggtitle("Rating distribution of hotels and neighbourhood restaurants") +
+  xlab("Rating level of restaurants") + 
+  ylab("Counts of hotels within 100^2pi sq meters") +
+  stat_bin(aes(y=..count.., label=..count..), geom="text", vjust=-.5, binwidth = 1) 
+
+ggplot(hf, aes(x = food_price,y = food_review_count)) +
+  geom_col(fill = "lightblue") +
+  facet_wrap(~hotel_rating2, nrow = 2) +
+  ggtitle("Review Counts of hotels and neighbourhood restaurants") +
+  xlab("Review Counts of restaurants") + 
+  ylab("Counts of hotels within 100^2pi sq meters") 
+```
+
+We could find some interesting facts here. 
+
+1) The higher the rating of the restaurant it is, it is not necessary that the ratings of the neighbourhood restaurants are higher. Taking the rating level 5 as an example, there are not that many reviews nor high ratings. One of the reasons might be not that many restaurants rated as 5 or 1. A lot of the hotels are rated as level 3.
+
+2) There are a lot of restaurants rated as level 3, and the majority of neighbourhood restaurants around level 3 hotels are also on level 3.
+
+3) The restaurants in Time Square are not too expensive. The most expensive ones are with three dollar signs. 
+
+4) The distributions of each price level of hotels are very similar. 4 dollar sign restaurants are very rare, and the proportion of 2 dollar sign restaurants is nearly 50% of the data at each level. 
+
+5) Hotels with 2 dollar signs have the most counts in Time Square. 
+
+# 6. Interactive Component: D3, jQuery, and Bootstrap 
+### Interactive Web System: https://pinhao1994.github.io/EDAV/
+
+We built our website by D3, jQuery, and Google Map API. In order to project our data points onto the map, we built a projector transforming longitude and latitude into svg path object. Also, Bootstrap model (https://getbootstrap.com/) was utilized to implenment responsive web design which allowed our website to become mobile friendly. There are three features that have been designed: Mouseover, Clicking, and Category-Choosing.
+
+When users mouse over each data point, our system will show the information of that restaurant or hotel; if the data point is a hotel location (in blue color), there will also be a histogram to show the top 5 restaurant categories surround the hotel. When users click the hotel data points (blue points), the system will draw out a circle area with 100 meters radius, and the top 3 restaurants near the hotel will be shown in yellow color. Last but not the least, users can choose restaurant categories, the restaurant with chosen category will be marked in red. For more details, please feel free to visit our website https://pinhao1994.github.io/EDAV/.
+
+# 7. Conclusion
+
+In this project, the main limitations come from the nature of our combined dataset. Since we combined NYC open data on Times Square’s hotels and restaurants with information scrapped from Yelp API and they have different recording strategies, ma tching each item perfectly is challenging. For the same item, its name and placed category in two resources might deviate. As a result, Yelp API does not have research results for about 5% of rows in NYC open data, even address and phone number are given. Although we have a high precision rate, there is a bottleneck for the recall rate. In addition, the restaurants’ categories defined by two resources are not uniform. For example, some are categorized by political regions, like Italian food or Japanese food, others are labeled by food type, such as café and steakhouse. Preprocessing it manually might lead to information leakage or misinterpretation, which undermines our analysis accuracy. Besides, most of our data are categorical, which limits our graphing choice and exploratory approaches. In the future, we wish to try incorporate more numeric variables in order to explore at more angles. It would also be interesting if we can extend this project to the Manhattan area or even the entire New York City. In that case, we can look at broader distance circle for each hotel and examine clustering pattern for different attributes.
