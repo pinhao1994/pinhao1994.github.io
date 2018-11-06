@@ -14,7 +14,7 @@ const examples = {
   'example3':
       'Scepticism was as much the result of knowledge, as knowledge is of scepticism.', 
   'example4':
-      "Life 'out there' is so strange, so unique, so full of hardship and danger, and yet so intensely interesting that it seems like another world."
+      "Life \"out there\" is so strange, so unique, so full of hardship and danger, and yet so intensely interesting that it seems like another world."
 };
 
 function status(statusText) {
